@@ -24,15 +24,20 @@ def generate_bars_and_stripes(num_samples):
 
         if pattern_type == 0:
             # Horizontal bar pattern
+            num_row=np.random.randint(1,3)
             pattern = np.zeros((4, 4))
-            row_idx = np.random.randint(4)
-            pattern[row_idx, :] = 1
+            for i in range(num_row):
+              row_idx = np.random.randint(4)
+              pattern[row_idx, :] = 1
+            
         else:
             # Vertical stripe pattern
+            num_col=np.random.randint(1,3)
             pattern = np.zeros((4, 4))
-            col_idx = np.random.randint(4)
-            pattern[:, col_idx] = 1
-
+            for i in range(num_col):
+              col_idx = np.random.randint(4)
+              pattern[:, col_idx] = 1
+                
         dataset.append(pattern)
         labels.append(pattern_type)
 
@@ -43,7 +48,7 @@ num_samples = 28
 bars_and_stripes_dataset, labels = generate_bars_and_stripes(num_samples)
 
 # # Visualization
-# plt.figure(figsize=(12, 3*num_samples))
+# plt.figure(figsize=(12, 3*num_samples),facecolor="gray")
 
 # for i in range(num_samples):
 #     plt.subplot(num_samples, 1, i+1)
