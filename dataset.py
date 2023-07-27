@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 def generate_bars_and_stripes(num_samples):
     """
     Generate the Bars and Stripes dataset.
@@ -11,8 +14,10 @@ def generate_bars_and_stripes(num_samples):
 
     Returns:
         dataset (numpy.ndarray): Array of shape (num_samples, 4, 4) containing the patterns.
+        labels (numpy.ndarray): Array of shape (num_samples,) containing the corresponding labels (0 for bars, 1 for stripes).
     """
     dataset = []
+    labels = []
     for _ in range(num_samples):
         # Randomly choose if it's a horizontal bar (0) or a vertical stripe (1)
         pattern_type = np.random.randint(2)
@@ -29,12 +34,13 @@ def generate_bars_and_stripes(num_samples):
             pattern[:, col_idx] = 1
 
         dataset.append(pattern)
+        labels.append(pattern_type)
 
-    return np.array(dataset)
+    return np.array(dataset), np.array(labels)
 
 # Example usage:
 num_samples = 28
-bars_and_stripes_dataset = generate_bars_and_stripes(num_samples)
+bars_and_stripes_dataset, labels = generate_bars_and_stripes(num_samples)
 
 # # Visualization
 # plt.figure(figsize=(12, 3*num_samples))
