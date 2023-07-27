@@ -1,3 +1,8 @@
+from qiskit import QuantumCircuit, Aer, assemble
+import numpy as np
+from qiskit.circuit.library import StatePreparation
+from qiskit.quantum_info import Statevector
+
 def encode_image(image):
 
     # image = np.array
