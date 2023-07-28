@@ -52,9 +52,9 @@ def generate_layer(n_r, edgelist, n_qubit=5):
         for i in range(n_r):
             rot_type = ["RY", "RZ"][0]
             # eval(f"qml.{rot_type}({params[i]}, {free_wires.pop(randint(len(free_wires)))})")
-            layer[1].append(0)
+            layer[1].append(free_wires.pop(randint(len(free_wires))))
 
-        print(f"layer: {layer}\n cnots: {layer[0]} \n rs: {layer[1]}")
+        #print(f"layer: {layer}\n cnots: {layer[0]} \n rs: {layer[1]}")
         return layer
 
     # def build_model(n_layers, params):
@@ -72,10 +72,10 @@ def generate_layer(n_r, edgelist, n_qubit=5):
 
 # function that constructs a layer from given array
 def construct_layer(layer, params):
-    print("level to build: ", layer)
+    #print("level to build: ", layer)
     for cnot in layer[0]:
         cnot = tuple(cnot)
-        print(f"cnot: {cnot}, type of cnot: {type(cnot)}")
+        #print(f"cnot: {cnot}, type of cnot: {type(cnot)}")
         if len(cnot) != 0: qml.CNOT(cnot)
     for i in range(len(params)):
         qml.RY(params[i], layer[1][i])
