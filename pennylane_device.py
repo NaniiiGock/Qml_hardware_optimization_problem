@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from generate_dataset import create_dataset
 from qiskit.providers.fake_provider import FakeAthensV2
 
-
+import qiskit
+import qiskit_aer.noise as noise
 
 def encode(image, wires=range(4)):
     qml.AmplitudeEmbedding(image, wires, pad_with=0, normalize=True)
@@ -14,14 +15,16 @@ BAS, labels = create_dataset(4)
 
 backend = FakeAthensV2()
 
-
 def block(weights, wires):
     qml.RY(weights[0], wires=wires[0])
     qml.RY(weights[1], wires=wires[1])
     qml.CNOT(wires=wires)
 
-dev = qml.device('qiskit.aer', wires=4)
-
+p = 0.01
+my_bitflip = noise.pauli_error([('X', p), ('I', 1 - p)])
+my_noise_model = noise.NoiseModel()
+my_noise_model.add_quantum_error(my_bitflip, ["h", "CX"], [0])
+dev = qml.device('qiskit.aer', wires=4, noise_model = my_noise_model)
 
 @qml.qnode(dev, interface="autograd")
 def circuit(image, template_weights):
