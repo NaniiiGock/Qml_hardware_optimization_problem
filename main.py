@@ -3,19 +3,19 @@ from pennylane import numpy as np
 import matplotlib.pyplot as plt
 
 
-BAS = [[1, 1, 0, 0], [0, 0, 1, 1], [1, 0, 1, 0], [0, 1, 0, 1]]
+BAS = [np.random.randint(2, size=16) for i in range(4)]
 
 def block(weights, wires):
     qml.RY(weights[0], wires=wires[0])
     qml.RY(weights[1], wires=wires[1])
     qml.CNOT(wires=wires)
 
-dev = qml.device('qiskit.ibmq', wires=4)
+dev = qml.device('default.qubit', wires=4)
 
 
 @qml.qnode(dev, interface="autograd")
 def circuit(image, template_weights):
-    qml.BasisStatePreparation(image, wires=range(4))
+    qml.AmplitudeEmbedding(image, wires=range(4), normalize=True)
     qml.TTN(
         wires=range(4),
         n_block_wires=2,
@@ -48,7 +48,7 @@ for k in range(100):
 for image in BAS:
     fig, ax = qml.draw_mpl(circuit, expansion_strategy="device")(image, params)
     plt.figure(figsize=[1.8, 1.8])
-    plt.imshow(np.reshape(image, [2, 2]), cmap="gray")
+    plt.imshow(np.reshape(image, [4, 4]), cmap="gray")
     plt.title(
         f"Exp. Val. = {circuit(image,params):.0f};"
         + f" Label = {'Bars' if circuit(image,params)>0 else 'Stripes'}",
