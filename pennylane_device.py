@@ -4,31 +4,13 @@ import matplotlib.pyplot as plt
 from generate_dataset import create_dataset
 from qiskit.providers.fake_provider import FakeAthensV2
 
-dev = qml.device('default.qubit', wires=4)
 
-def amplitude_encoding(image, wires):
-    for idx, pixel in enumerate(image):
-        idx = idx%4
-        qml.RY(2 * np.arcsin(np.sqrt(pixel)), wires=wires[idx])
 
 def encode(image, wires=range(4)):
     qml.AmplitudeEmbedding(image, wires, pad_with=0, normalize=True)
 
-@qml.qnode(dev)
-def quantum_state(image):
-    encode(image,wires = [0,1,2,3])
-    return qml.state()
-
-
 
 BAS, labels = create_dataset(4)
-
-states = []
-
-for image in BAS:
-    states.append(tuple(quantum_state(image)))
-
-print(len(set(states)))
 
 backend = FakeAthensV2()
 
@@ -72,16 +54,26 @@ for k in range(100):
     if k % 20 == 0:
         print(f"Step {k}, cost: {costfunc(params)}")
     params = optimizer.step(costfunc, params)
-
-for image in BAS[14:]:
+false_count = 0
+for indx, image in enumerate(BAS[14:]):
     fig, ax = qml.draw_mpl(circuit, expansion_strategy="device")(image, params)
     plt.figure(figsize=[1.8, 1.8])
     plt.imshow(np.reshape(image, [4, 4]), cmap="gray")
+    if circuit(image,params)<0:
+        if indx%2==0:
+            false_count+=1
+    else:
+        if indx%2==1:
+            false_count+=1
+        
     plt.title(
         f"Exp. Val. = {circuit(image,params):.0f};"
         + f" Label = {'Bars' if circuit(image,params)<0 else 'Stripes'}",
+
         fontsize=8,
     )
     plt.xticks([])
     plt.yticks([])
-    plt.show()
+    # plt.show()
+
+print(1 - (false_count/14))
